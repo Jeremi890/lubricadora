@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lubricadoras Diana — Sistema de Control de Inventario</title>
+  
+  <!-- CSS BASE -->
+  <link rel="stylesheet" href="css/css-base.css">
+  <link rel="stylesheet" href="css/css-login.css">
+  <link rel="stylesheet" href="css/css-sidebar.css">
+  <link rel="stylesheet" href="css/css-main.css">
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-container">
+    <div class="login-brand">
+      <div class="login-logo">LD</div>
+      <h1>Lubricadoras Diana</h1>
+      <p>Sistema de Control de Inventario Digital</p>
+    </div>
+    <div class="login-card">
+      <h2>Iniciar Sesión</h2>
+      <p class="subtitle">Seleccione su rol e ingrese sus credenciales</p>
+      <div class="login-error" id="loginError">Usuario o contraseña incorrectos.</div>
+      
+      <div class="role-selector">
+        <div class="role-option selected" data-role="admin" onclick="AUTH.selectRole.call(AUTH, this)">
+          <span class="role-icon">🔑</span>
+          <span class="role-name">Administrador</span>
+          <span class="role-desc">Acceso completo</span>
+        </div>
+        <div class="role-option" data-role="empleado" onclick="AUTH.selectRole.call(AUTH, this)">
+          <span class="role-icon">👤</span>
+          <span class="role-name">Empleado</span>
+          <span class="role-desc">Operaciones básicas</span>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label>Usuario</label>
+        <input type="text" id="loginUser" placeholder="Ingrese su usuario">
+      </div>
+      <div class="form-group">
+        <label>Contraseña</label>
+        <input type="password" id="loginPass" placeholder="Ingrese su contraseña">
+      </div>
+      
+      <button class="btn-login" onclick="AUTH.handleLogin.call(AUTH)">Ingresar al Sistema</button>
+      
+      <div class="login-credentials">
+        <p>Credenciales demo</p>
+        <code>Admin → <b>admin</b> / <b>admin123</b><br>
+        Empleado → <b>empleado</b> / <b>emp123</b></code>
+      </div>
+    </div>
+    <div class="login-footer">Universidad de Guayaquil · Carrera de Software · 2026</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="logo">
+      <div class="logo-icon">LD</div>
+      <div class="logo-text">
+        Lubricadoras Diana
+        <span>Control de Inventario</span>
+      </div>
+    </div>
+
+    <nav id="sidebarNav">
+      <div class="nav-section">
+        <div class="nav-label">Principal</div>
+        <div class="nav-item active" data-view="dashboard" onclick="NAV.go('dashboard')">
+          📊 Dashboard
+        </div>
+        <div class="nav-item" data-view="productos" onclick="NAV.go('productos')">
+          📦 Productos
+        </div>
+        <div class="nav-item" data-view="facturacion" onclick="NAV.go('facturacion')">
+          📄 Facturación
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Inventario</div>
+        <div class="nav-item" data-view="movimientos" onclick="NAV.go('movimientos')">
+          📈 Movimientos
+        </div>
+        <div class="nav-item" data-view="alertas" onclick="NAV.go('alertas')">
+          ⚠️ Alertas <span class="nav-badge">5</span>
+        </div>
+        <div class="nav-item" data-view="proveedores" data-admin="1" onclick="NAV.go('proveedores')">
+          🤝 Proveedores
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <div class="nav-label">Reportes</div>
+        <div class="nav-item" data-view="estadisticas" data-admin="1" onclick="NAV.go('estadisticas')">
+          📊 Estadísticas
+        </div>
+        <div class="nav-item" data-view="reportes" data-admin="1" onclick="NAV.go('reportes')">
+          📋 Reportes NIC 2
+        </div>
+      </div>
+    </nav>
+
+    <div class="sidebar-footer">
+      <div class="user-card">
+        <div class="user-avatar" id="uAvatar">JV</div>
+        <div class="user-info">
+          <div class="user-name" id="uName">Jeremi Vera</div>
+          <div class="user-role-label" id="uRole">Administrador</div>
+        </div>
+      </div>
+      <button class="btn-logout" onclick="AUTH.handleLogout.call(AUTH)">🚪 Cerrar Sesión</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1 id="pageTitle">Dashboard</h1>
+        <p>Miércoles, 12 de febrero 2026 — Sucursal Principal</p>
+      </div>
+      <div class="topbar-right">
+        <div class="search-box">
+          <input type="text" placeholder="Buscar producto, código...">
+        </div>
+        <button class="icon-btn" onclick="NAV.go('alertas')">
+          🔔 <span class="dot"></span>
+        </button>
+        <button class="btn-primary" id="btnNew" onclick="PRODUCTOS.showModal()">
+          ➕ Nuevo Producto
+        </button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD VIEW -->
+    <div class="view active" id="view-dashboard">
+      <h2>Bienvenido al Dashboard</h2>
+      <p>Selecciona una sección en el menú lateral para comenzar.</p>
+    </div>
+
+    <!-- PRODUCTOS VIEW -->
+    <div class="view" id="view-productos">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Catálogo de Productos</div>
+          <button class="btn-primary" onclick="PRODUCTOS.showModal()">➕ Nuevo</button>
+        </div>
+        <div class="table-wrap">
+          <table id="productosTable">
+            <thead>
+              <tr>
+                <th>Producto</th>
+                <th>Categoría</th>
+                <th>Stock</th>
+                <th>Estado</th>
+                <th>Precio Venta</th>
+                <th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td colspan="6" style="text-align:center;padding:20px;">Cargando productos...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- FACTURACION VIEW -->
+    <div class="view" id="view-facturacion">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Facturación</div>
+        </div>
+        <div style="padding:20px;">
+          <p>Módulo de facturación en desarrollo...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOVIMIENTOS VIEW -->
+    <div class="view" id="view-movimientos">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Movimientos de Inventario</div>
+        </div>
+        <div style="padding:20px;">
+          <p>Historial de movimientos en desarrollo...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ALERTAS VIEW -->
+    <div class="view" id="view-alertas">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Alertas del Sistema</div>
+        </div>
+        <div style="padding:20px;">
+          <p>Alertas en desarrollo...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- PROVEEDORES VIEW (Admin) -->
+    <div class="view" id="view-proveedores">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Gestión de Proveedores</div>
+        </div>
+        <div style="padding:20px;">
+          <p>Módulo de proveedores en desarrollo...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ESTADISTICAS VIEW (Admin) -->
+    <div class="view" id="view-estadisticas">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Estadísticas</div>
+        </div>
+        <div style="padding:20px;">
+          <p>Estadísticas en desarrollo...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORTES VIEW (Admin) -->
+    <div class="view" id="view-reportes">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">Reportes NIC 2</div>
+        </div>
+        <div style="padding:20px;">
+          <p>Reportes contables en desarrollo...</p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<!-- MODAL: Nuevo Producto -->
+<div class="modal-overlay" id="productModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalTitle">Registrar Nuevo Producto</h3>
+      <button class="modal-close" onclick="MODAL.close('productModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="productForm">
+        <input type="hidden" id="productId">
+        
+        <div class="form-group">
+          <label>Nombre del producto</label>
+          <input type="text" id="nombre" placeholder="Ej: Castrol GTX 20W-50" required>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Código SKU</label>
+            <input type="text" id="codigo" placeholder="SKU-000" required>
+          </div>
+          <div class="form-group">
+            <label>Categoría</label>
+            <select id="categoria" required>
+              <option>Aceites</option>
+              <option>Filtros</option>
+              <option>Aditivos</option>
+              <option>Grasas</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Precio compra ($)</label>
+            <input type="number" id="precio_compra" placeholder="0.00" step="0.01" required>
+          </div>
+          <div class="form-group">
+            <label>Precio venta ($)</label>
+            <input type="number" id="precio_venta" placeholder="0.00" step="0.01" required>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>Stock inicial</label>
+            <input type="number" id="stock" placeholder="0" required>
+          </div>
+          <div class="form-group">
+            <label>Stock mínimo</label>
+            <input type="number" id="stock_minimo" placeholder="5" required>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Proveedor</label>
+          <select id="proveedor" required>
+            <option>Castrol Ecuador</option>
+            <option>Texaco / Havoline</option>
+            <option>Shell Ecuador</option>
+            <option>Valvoline</option>
+          </select>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-secondary" onclick="MODAL.close('productModal')">Cancelar</button>
+      <button class="btn-primary" onclick="PRODUCTOS.save.call(PRODUCTOS)">✅ Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST CONTAINER -->
+<div id="toastContainer" class="toast-container"></div>
+
+<!-- SCRIPTS -->
+<script src="js/js-auth.js"></script>
+<script src="js/js-nav.js"></script>
+<script src="js/js-ui.js"></script>
+<script src="js/js-productos.js"></script>
+
+</body>
+</html>

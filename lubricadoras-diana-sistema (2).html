@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lubricadoras Diana — Sistema de Control de Inventario</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-screen" id="loginScreen">
+<div class="login-container">
+<div class="login-brand"><div class="login-logo">LD</div><h1>Lubricadoras Diana</h1><p>Sistema de Control de Inventario Digital</p></div>
+<div class="login-card">
+<h2>Iniciar Sesión</h2><p class="subtitle">Seleccione su rol e ingrese sus credenciales</p>
+<div class="login-error" id="loginError">Usuario o contraseña incorrectos.</div>
+<div class="role-selector">
+<div class="role-option selected" data-role="admin" onclick="selectRole(this)"><span class="role-icon">🔑</span><span class="role-name">Administrador</span><span class="role-desc">Acceso completo</span></div>
+<div class="role-option" data-role="empleado" onclick="selectRole(this)"><span class="role-icon">👤</span><span class="role-name">Empleado</span><span class="role-desc">Operaciones básicas</span></div>
+</div>
+<div class="form-group"><label>Usuario</label><input type="text" id="loginUser" placeholder="Ingrese su usuario"></div>
+<div class="form-group"><label>Contraseña</label><input type="password" id="loginPass" placeholder="Ingrese su contraseña"></div>
+<button class="btn-login" onclick="handleLogin()">Ingresar al Sistema</button>
+<div class="login-credentials"><p>Credenciales demo</p><code>Admin → <b>admin</b> / <b>admin123</b><br>Empleado → <b>empleado</b> / <b>emp123</b></code></div>
+</div>
+<div class="login-footer">Universidad de Guayaquil · Carrera de Software · Jeremi Smith Vera Arévalo · 2026</div>
+</div></div>
+
+<!-- APP -->
+<div class="app" id="app">
+<aside class="sidebar">
+<div class="logo"><div class="logo-icon">LD</div><div class="logo-text">Lubricadoras Diana<span>Control de Inventario</span></div></div>
+<nav id="sidebarNav">
+<div class="nav-section"><div class="nav-label">Principal</div>
+<div class="nav-item active" data-view="dashboard" onclick="nav('dashboard')"><svg><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Dashboard</div>
+<div class="nav-item" data-view="productos" onclick="nav('productos')"><svg><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>Productos</div>
+<div class="nav-item" data-view="facturacion" onclick="nav('facturacion')"><svg><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>Facturación</div>
+</div>
+<div class="nav-section"><div class="nav-label">Inventario</div>
+<div class="nav-item" data-view="movimientos" onclick="nav('movimientos')"><svg><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Movimientos</div>
+<div class="nav-item" data-view="alertas" onclick="nav('alertas')"><svg><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>Alertas<span class="nav-badge">5</span></div>
+<div class="nav-item" data-view="proveedores" data-admin="1" onclick="nav('proveedores')"><svg><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>Proveedores</div>
+</div>
+<div class="nav-section"><div class="nav-label">Reportes</div>
+<div class="nav-item" data-view="estadisticas" data-admin="1" onclick="nav('estadisticas')"><svg><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Estadísticas</div>
+<div class="nav-item" data-view="reportes" data-admin="1" onclick="nav('reportes')"><svg><path d="M4 15s1-1 4-1 5 2 8 2 4-1 4-1V3s-1 1-4 1-5-2-8-2-4 1-4 1z"/><line x1="4" y1="22" x2="4" y2="15"/></svg>Reportes NIC 2</div>
+</div>
+</nav>
+<div class="sidebar-footer">
+<div class="user-card"><div class="user-avatar" id="uAvatar">JV</div><div class="user-info"><div class="user-name" id="uName">Jeremi Vera</div><div class="user-role-label" id="uRole">Administrador</div></div></div>
+<button class="btn-logout" onclick="handleLogout()"><svg><path d="M9 21H5a2 2 0 01-2-2V5a2 2 0 012-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>Cerrar Sesión</button>
+</div>
+</aside>
+
+<main class="main">
+<div class="topbar">
+<div class="topbar-left"><h1 id="pageTitle">Dashboard</h1><p>Miércoles, 12 de febrero 2026 — Sucursal Principal</p></div>
+<div class="topbar-right">
+<div class="search-box"><svg><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input type="text" placeholder="Buscar producto, código..."></div>
+<button class="icon-btn" onclick="nav('alertas')"><svg><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg><span class="dot"></span></button>
+<button class="btn-primary" id="btnNew" onclick="openModal('productModal')"><svg><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo Producto</button>
+</div></div>
+
+<!-- DASHBOARD -->
+<div class="view active" id="view-dashboard">
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-header"><div class="stat-icon blue"><svg><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg></div><div class="stat-trend up"><svg><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>+12%</div></div><div class="stat-value">1,284</div><div class="stat-label">Total productos en stock</div></div>
+<div class="stat-card"><div class="stat-header"><div class="stat-icon green"><svg><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg></div><div class="stat-trend up"><svg><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>+8.3%</div></div><div class="stat-value">$18,420</div><div class="stat-label">Valoración del inventario</div></div>
+<div class="stat-card"><div class="stat-header"><div class="stat-icon amber"><svg><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div><div class="stat-trend down"><svg><polyline points="23 18 13.5 8.5 8.5 13.5 1 6"/></svg>-3</div></div><div class="stat-value">12</div><div class="stat-label">Productos en stock bajo</div></div>
+<div class="stat-card"><div class="stat-header"><div class="stat-icon red"><svg><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div><div class="stat-trend up"><svg><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg>4.2x</div></div><div class="stat-value">4.2</div><div class="stat-label">Índice de rotación mensual</div></div>
+</div>
+<div class="content-grid">
+<div class="card"><div class="card-header"><div class="card-title">Inventario de Productos</div><div style="display:flex;align-items:center;gap:12px"><div class="tabs"><div class="tab active">Todos</div><div class="tab">Aceites</div><div class="tab">Filtros</div></div><a class="card-action" onclick="nav('productos')">Ver todo →</a></div></div>
+<div class="table-wrap"><table><thead><tr><th>Producto</th><th>Categoría</th><th>Stock</th><th>Estado</th><th>Valoración</th><th>Método</th></tr></thead><tbody>
+<tr><td><div class="product-cell"><div class="product-thumb">🛢️</div><div><div class="product-name">Castrol GTX 20W-50</div><div class="product-sku">SKU-001 · 1 Galón</div></div></div></td><td>Aceites</td><td><b>48</b></td><td><span class="stock-badge ok">Óptimo</span></td><td>$672.00</td><td><span class="valoracion-badge">Prom. Pond.</span></td></tr>
+<tr><td><div class="product-cell"><div class="product-thumb">🛢️</div><div><div class="product-name">Havoline 10W-40</div><div class="product-sku">SKU-002 · 1 Litro</div></div></div></td><td>Aceites</td><td><b>7</b></td><td><span class="stock-badge low">Stock bajo</span></td><td>$59.50</td><td><span class="valoracion-badge">Prom. Pond.</span></td></tr>
+<tr><td><div class="product-cell"><div class="product-thumb">⚙️</div><div><div class="product-name">Filtro aceite Toyota</div><div class="product-sku">SKU-015 · Unidad</div></div></div></td><td>Filtros</td><td><b>22</b></td><td><span class="stock-badge ok">Óptimo</span></td><td>$154.00</td><td><span class="valoracion-badge">FIFO</span></td></tr>
+<tr><td><div class="product-cell"><div class="product-thumb">🛢️</div><div><div class="product-name">Valvoline MaxLife 5W-30</div><div class="product-sku">SKU-008 · 1 Galón</div></div></div></td><td>Aceites</td><td><b>3</b></td><td><span class="stock-badge critical">Crítico</span></td><td>$54.00</td><td><span class="valoracion-badge">Prom. Pond.</span></td></tr>
+<tr><td><div class="product-cell"><div class="product-thumb">🧴</div><div><div class="product-name">Liqui Moly Ceratec</div><div class="product-sku">SKU-022 · 300ml</div></div></div></td><td>Aditivos</td><td><b>15</b></td><td><span class="stock-badge ok">Óptimo</span></td><td>$262.50</td><td><span class="valoracion-badge">Prom. Pond.</span></td></tr>
+</tbody></table></div></div>
+<div class="card"><div class="card-header"><div class="card-title">Alertas del Sistema</div><a class="card-action" onclick="nav('alertas')">Ver todas →</a></div>
+<div class="alert-list">
+<div class="alert-item"><div class="alert-dot red"></div><div class="alert-content"><div class="alert-title">Stock crítico: Valvoline 5W-30</div><div class="alert-desc">Quedan solo 3 uds. Mínimo: 10.</div></div><div class="alert-time">12m</div></div>
+<div class="alert-item"><div class="alert-dot red"></div><div class="alert-content"><div class="alert-title">Stock crítico: Shell Helix 10W-40</div><div class="alert-desc">Quedan 2 uds. Mínimo: 8.</div></div><div class="alert-time">45m</div></div>
+<div class="alert-item"><div class="alert-dot amber"></div><div class="alert-content"><div class="alert-title">Stock bajo: Havoline 10W-40</div><div class="alert-desc">7 uds restantes.</div></div><div class="alert-time">2h</div></div>
+<div class="alert-item"><div class="alert-dot amber"></div><div class="alert-content"><div class="alert-title">Sin rotación: MotorClean 250ml</div><div class="alert-desc">45 días sin movimiento.</div></div><div class="alert-time">3h</div></div>
+<div class="alert-item"><div class="alert-dot green"></div><div class="alert-content"><div class="alert-title">Recepción completada #1847</div><div class="alert-desc">Orden Castrol registrada.</div></div><div class="alert-time">5h</div></div>
+</div></div></div>
+<div class="bottom-grid">
+<div class="card"><div class="card-header"><div class="card-title">Ventas vs Compras</div><div class="tabs"><div class="tab active">Semana</div><div class="tab">Mes</div></div></div>
+<div class="chart-area"><div class="chart-legend"><div class="legend-item"><div class="legend-dot" style="background:var(--text-primary)"></div>Ventas</div><div class="legend-item"><div class="legend-dot" style="background:var(--border)"></div>Compras</div></div>
+<div class="chart-container">
+<div class="chart-bar-group"><div style="display:flex;gap:4px;align-items:flex-end;height:100%"><div class="chart-bar primary" style="height:65%;width:16px"></div><div class="chart-bar secondary" style="height:45%;width:16px"></div></div><div class="chart-label">Lun</div></div>
+<div class="chart-bar-group"><div style="display:flex;gap:4px;align-items:flex-end;height:100%"><div class="chart-bar primary" style="height:80%;width:16px"></div><div class="chart-bar secondary" style="height:30%;width:16px"></div></div><div class="chart-label">Mar</div></div>
+<div class="chart-bar-group"><div style="display:flex;gap:4px;align-items:flex-end;height:100%"><div class="chart-bar primary" style="height:55%;width:16px"></div><div class="chart-bar secondary" style="height:70%;width:16px"></div></div><div class="chart-label">Mié</div></div>
+<div class="chart-bar-group"><div style="display:flex;gap:4px;align-items:flex-end;height:100%"><div class="chart-bar primary" style="height:90%;width:16px"></div><div class="chart-bar secondary" style="height:40%;width:16px"></div></div><div class="chart-label">Jue</div></div>
+<div class="chart-bar-group"><div style="display:flex;gap:4px;align-items:flex-end;height:100%"><div class="chart-bar primary" style="height:100%;width:16px"></div><div class="chart-bar secondary" style="height:55%;width:16px"></div></div><div class="chart-label">Vie</div></div>
+<div class="chart-bar-group"><div style="display:flex;gap:4px;align-items:flex-end;height:100%"><div class="chart-bar primary" style="height:70%;width:16px"></div><div class="chart-bar secondary" style="height:25%;width:16px"></div></div><div class="chart-label">Sáb</div></div>
+<div class="chart-bar-group"><div style="display:flex;gap:4px;align-items:flex-end;height:100%"><div class="chart-bar primary" style="height:35%;width:16px"></div><div class="chart-bar secondary" style="height:15%;width:16px"></div></div><div class="chart-label">Dom</div></div>
+</div></div></div>
+<div class="card"><div class="card-header"><div class="card-title">Últimos Movimientos</div><a class="card-action" onclick="nav('movimientos')">Historial →</a></div>
+<div class="movement-list">
+<div class="movement-item"><div class="movement-icon out"><svg><polyline points="7 7 17 17"/><polyline points="17 7 17 17 7 17"/></svg></div><div class="movement-info"><div class="movement-product">Castrol GTX 20W-50</div><div class="movement-detail">Venta · #4821 · 14:32</div></div><div class="movement-qty out">−2</div></div>
+<div class="movement-item"><div class="movement-icon in"><svg><polyline points="17 17 7 7"/><polyline points="7 17 7 7 17 7"/></svg></div><div class="movement-info"><div class="movement-product">Filtro aceite Toyota</div><div class="movement-detail">Compra · #1847 · 11:15</div></div><div class="movement-qty in">+24</div></div>
+<div class="movement-item"><div class="movement-icon out"><svg><polyline points="7 7 17 17"/><polyline points="17 7 17 17 7 17"/></svg></div><div class="movement-info"><div class="movement-product">Havoline 10W-40</div><div class="movement-detail">Venta · #4820 · 10:48</div></div><div class="movement-qty out">−3</div></div>
+<div class="movement-item"><div class="movement-icon in"><svg><polyline points="17 17 7 7"/><polyline points="7 17 7 7 17 7"/></svg></div><div class="movement-info"><div class="movement-product">Valvoline MaxLife 5W-30</div><div class="movement-detail">Compra · #1845 · Ayer</div></div><div class="movement-qty in">+12</div></div>
+</div></div></div></div>
+
+<!-- PRODUCTOS -->
+<div class="view" id="view-productos"><div class="section-header"><div><h2>Catálogo de Productos</h2><p>Gestión completa del inventario</p></div><button class="btn-primary" onclick="openModal('productModal')"><svg><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Agregar Producto</button></div>
+<div class="card"><div class="card-header"><div class="tabs"><div class="tab active">Todos (87)</div><div class="tab">Aceites (34)</div><div class="tab">Filtros (28)</div><div class="tab">Aditivos (15)</div></div></div>
+<div class="table-wrap"><table><thead><tr><th>Producto</th><th>Categoría</th><th>Stock</th><th>Mín</th><th>Máx</th><th>Estado</th><th>Costo</th><th>PVP</th><th>Valoración</th></tr></thead><tbody>
+<tr><td><div class="product-cell"><div class="product-thumb">🛢️</div><div><div class="product-name">Castrol GTX 20W-50</div><div class="product-sku">SKU-001</div></div></div></td><td>Aceites</td><td><b>48</b></td><td>10</td><td>60</td><td><span class="stock-badge ok">Óptimo</span></td><td>$12.00</td><td>$16.50</td><td>$576.00</td></tr>
+<tr><td><div class="product-cell"><div class="product-thumb">🛢️</div><div><div class="product-name">Havoline 10W-40</div><div class="product-sku">SKU-002</div></div></div></td><td>Aceites</td><td><b>7</b></td><td>15</td><td>50</td><td><span class="stock-badge low">Bajo</span></td><td>$7.20</td><td>$9.80</td><td>$50.40</td></tr>
+<tr><td><div class="product-cell"><div class="product-thumb">🛢️</div><div><div class="product-name">Valvoline MaxLife 5W-30</div><div class="product-sku">SKU-008</div></div></div></td><td>Aceites</td><td><b>3</b></td><td>10</td><td>40</td><td><span class="stock-badge critical">Crítico</span></td><td>$15.50</td><td>$21.00</td><td>$46.50</td></tr>
+<tr><td><div class="product-cell"><div class="product-thumb">🛢️</div><div><div class="product-name">Shell Helix 10W-40</div><div class="product-sku">SKU-005</div></div></div></td><td>Aceites</td><td><b>2</b></td><td>12</td><td>45</td><td><span class="stock-badge critical">Crítico</span></td><td>$8.40</td><td>$11.50</td><td>$16.80</td></tr>
+<tr><td><div class="product-cell"><div class="product-thumb">⚙️</div><div><div class="product-name">Filtro aceite Toyota</div><div class="product-sku">SKU-015</div></div></div></td><td>Filtros</td><td><b>22</b></td><td>8</td><td>30</td><td><span class="stock-badge ok">Óptimo</span></td><td>$5.80</td><td>$8.50</td><td>$127.60</td></tr>
+<tr><td><div class="product-cell"><div class="product-thumb">🧴</div><div><div class="product-name">Liqui Moly Ceratec</div><div class="product-sku">SKU-022</div></div></div></td><td>Aditivos</td><td><b>15</b></td><td>5</td><td>20</td><td><span class="stock-badge ok">Óptimo</span></td><td>$14.80</td><td>$19.90</td><td>$222.00</td></tr>
+<tr><td><div class="product-cell"><div class="product-thumb">🔧</div><div><div class="product-name">Grasa Multipropósito EP2</div><div class="product-sku">SKU-040</div></div></div></td><td>Grasas</td><td><b>30</b></td><td>10</td><td>40</td><td><span class="stock-badge ok">Óptimo</span></td><td>$3.20</td><td>$5.00</td><td>$96.00</td></tr>
+</tbody></table></div></div></div>
+
+<!-- FACTURACIÓN -->
+<div class="view" id="view-facturacion"><div class="section-header"><div><h2>Facturación</h2><p>Registro de ventas y comprobantes</p></div><button class="btn-primary" onclick="showToast('🧾','Módulo de nueva factura en desarrollo')"><svg><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nueva Factura</button></div>
+<div class="card"><div class="card-header"><div class="card-title">Facturas Recientes</div><div class="tabs"><div class="tab active">Hoy</div><div class="tab">Semana</div><div class="tab">Mes</div></div></div>
+<div class="table-wrap"><table><thead><tr><th>N° Factura</th><th>Cliente</th><th>Productos</th><th>Total</th><th>Hora</th><th>Estado</th></tr></thead><tbody>
+<tr><td><b>#4821</b></td><td>Carlos Mendoza</td><td>Castrol GTX (x2), Filtro Toyota (x1)</td><td><b>$41.50</b></td><td>14:32</td><td><span class="stock-badge ok">Pagada</span></td></tr>
+<tr><td><b>#4820</b></td><td>María López</td><td>Havoline 10W-40 (x3)</td><td><b>$29.40</b></td><td>10:48</td><td><span class="stock-badge ok">Pagada</span></td></tr>
+<tr><td><b>#4819</b></td><td>Juan Pérez</td><td>Liqui Moly (x1), Shell Helix (x2)</td><td><b>$42.90</b></td><td>09:22</td><td><span class="stock-badge ok">Pagada</span></td></tr>
+<tr><td><b>#4818</b></td><td>Ana García</td><td>Valvoline MaxLife (x1)</td><td><b>$21.00</b></td><td>08:15</td><td><span class="stock-badge ok">Pagada</span></td></tr>
+</tbody></table></div></div></div>
+
+<!-- MOVIMIENTOS -->
+<div class="view" id="view-movimientos"><div class="section-header"><div><h2>Movimientos de Inventario</h2><p>Historial de entradas y salidas</p></div><div style="display:flex;gap:10px"><button class="btn-primary" onclick="showToast('✅','Entrada registrada')"><svg><polyline points="17 17 7 7"/><polyline points="7 17 7 7 17 7"/></svg>Registrar Entrada</button><button class="btn-secondary" onclick="showToast('📦','Salida registrada')">Registrar Salida</button></div></div>
+<div class="card"><div class="card-header"><div class="card-title">Historial</div><div class="tabs"><div class="tab active">Todos</div><div class="tab">Entradas</div><div class="tab">Salidas</div></div></div>
+<div class="table-wrap"><table><thead><tr><th>Fecha</th><th>Tipo</th><th>Producto</th><th>Cantidad</th><th>Referencia</th><th>Responsable</th></tr></thead><tbody>
+<tr><td>12/02/2026 14:32</td><td><span class="stock-badge critical">Salida</span></td><td>Castrol GTX 20W-50</td><td><b style="color:var(--danger)">−2</b></td><td>Factura #4821</td><td>Carlos M.</td></tr>
+<tr><td>12/02/2026 11:15</td><td><span class="stock-badge ok">Entrada</span></td><td>Filtro aceite Toyota</td><td><b style="color:var(--success)">+24</b></td><td>Orden #1847</td><td>Jeremi V.</td></tr>
+<tr><td>12/02/2026 10:48</td><td><span class="stock-badge critical">Salida</span></td><td>Havoline 10W-40</td><td><b style="color:var(--danger)">−3</b></td><td>Factura #4820</td><td>María L.</td></tr>
+<tr><td>12/02/2026 09:22</td><td><span class="stock-badge critical">Salida</span></td><td>Liqui Moly Ceratec</td><td><b style="color:var(--danger)">−1</b></td><td>Factura #4819</td><td>Juan P.</td></tr>
+<tr><td>11/02/2026 14:00</td><td><span class="stock-badge ok">Entrada</span></td><td>Valvoline MaxLife 5W-30</td><td><b style="color:var(--success)">+12</b></td><td>Orden #1845</td><td>Jeremi V.</td></tr>
+<tr><td>11/02/2026 09:30</td><td><span class="stock-badge ok">Entrada</span></td><td>Shell Helix 10W-40</td><td><b style="color:var(--success)">+20</b></td><td>Orden #1844</td><td>Jeremi V.</td></tr>
+</tbody></table></div></div></div>
+
+<!-- ALERTAS -->
+<div class="view" id="view-alertas"><div class="section-header"><div><h2>Centro de Alertas</h2><p>Notificaciones de stock y recepciones</p></div></div>
+<div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px">
+<div class="stat-card"><div class="stat-header"><div class="stat-icon red"><svg><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div></div><div class="stat-value">2</div><div class="stat-label">Alertas críticas</div></div>
+<div class="stat-card"><div class="stat-header"><div class="stat-icon amber"><svg><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/></svg></div></div><div class="stat-value">2</div><div class="stat-label">Advertencias</div></div>
+<div class="stat-card"><div class="stat-header"><div class="stat-icon green"><svg><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div></div><div class="stat-value">1</div><div class="stat-label">Informativas</div></div>
+</div>
+<div class="card"><div class="card-header"><div class="card-title">Todas las Alertas</div></div>
+<div class="alert-list">
+<div class="alert-item"><div class="alert-dot red"></div><div class="alert-content"><div class="alert-title">⚠️ Stock crítico: Valvoline MaxLife 5W-30</div><div class="alert-desc">Quedan <b>3 uds</b>. Mínimo: 10. Generar orden de compra inmediata.</div></div><div class="alert-time">12 min</div></div>
+<div class="alert-item"><div class="alert-dot red"></div><div class="alert-content"><div class="alert-title">⚠️ Stock crítico: Shell Helix 10W-40</div><div class="alert-desc">Quedan <b>2 uds</b>. Mínimo: 8. Alta rotación — priorizar.</div></div><div class="alert-time">45 min</div></div>
+<div class="alert-item"><div class="alert-dot amber"></div><div class="alert-content"><div class="alert-title">📦 Stock bajo: Havoline 10W-40</div><div class="alert-desc">7 uds restantes (mínimo: 15). Reabastecer esta semana.</div></div><div class="alert-time">2h</div></div>
+<div class="alert-item"><div class="alert-dot amber"></div><div class="alert-content"><div class="alert-title">🕐 Sin rotación: Aditivo MotorClean 250ml</div><div class="alert-desc">SKU-035 lleva 45 días sin movimiento. Considerar promoción.</div></div><div class="alert-time">3h</div></div>
+<div class="alert-item"><div class="alert-dot green"></div><div class="alert-content"><div class="alert-title">✅ Recepción completada</div><div class="alert-desc">Orden #1847 — Castrol Ecuador. 24 uds ingresadas.</div></div><div class="alert-time">5h</div></div>
+</div></div></div>
+
+<!-- PROVEEDORES (Admin) -->
+<div class="view" id="view-proveedores"><div class="section-header"><div><h2>Proveedores</h2><p>Gestión de proveedores y órdenes de compra</p></div><button class="btn-primary"><svg><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Nuevo Proveedor</button></div>
+<div class="proveedor-grid">
+<div class="proveedor-card"><h4>Castrol Ecuador</h4><div class="meta">Aceites · RUC: 0991234567001</div><div class="proveedor-stat"><span>Productos</span><span>18</span></div><div class="proveedor-stat"><span>Última orden</span><span>12/02/2026</span></div><div class="proveedor-stat"><span>Compras (mes)</span><span>$2,840</span></div></div>
+<div class="proveedor-card"><h4>Texaco / Havoline</h4><div class="meta">Aceites y aditivos · RUC: 0992345678001</div><div class="proveedor-stat"><span>Productos</span><span>12</span></div><div class="proveedor-stat"><span>Última orden</span><span>08/02/2026</span></div><div class="proveedor-stat"><span>Compras (mes)</span><span>$1,560</span></div></div>
+<div class="proveedor-card"><h4>Shell Ecuador</h4><div class="meta">Aceites premium · RUC: 0993456789001</div><div class="proveedor-stat"><span>Productos</span><span>9</span></div><div class="proveedor-stat"><span>Última orden</span><span>05/02/2026</span></div><div class="proveedor-stat"><span>Compras (mes)</span><span>$980</span></div></div>
+<div class="proveedor-card"><h4>Valvoline Distribuidora</h4><div class="meta">Aceites sintéticos · RUC: 0994567890001</div><div class="proveedor-stat"><span>Productos</span><span>7</span></div><div class="proveedor-stat"><span>Última orden</span><span>11/02/2026</span></div><div class="proveedor-stat"><span>Compras (mes)</span><span>$720</span></div></div>
+<div class="proveedor-card"><h4>Liqui Moly Import</h4><div class="meta">Aditivos · RUC: 0995678901001</div><div class="proveedor-stat"><span>Productos</span><span>5</span></div><div class="proveedor-stat"><span>Última orden</span><span>01/02/2026</span></div><div class="proveedor-stat"><span>Compras (mes)</span><span>$450</span></div></div>
+<div class="proveedor-card"><h4>Filtros del Pacífico</h4><div class="meta">Filtros automotrices · RUC: 0996789012001</div><div class="proveedor-stat"><span>Productos</span><span>28</span></div><div class="proveedor-stat"><span>Última orden</span><span>10/02/2026</span></div><div class="proveedor-stat"><span>Compras (mes)</span><span>$1,120</span></div></div>
+</div></div>
+
+<!-- ESTADÍSTICAS (Admin) -->
+<div class="view" id="view-estadisticas"><div class="section-header"><div><h2>Estadísticas</h2><p>Indicadores financieros y de rendimiento</p></div></div>
+<div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px">
+<div class="stat-card"><div class="stat-value">32.4%</div><div class="stat-label">Margen de utilidad bruta</div></div>
+<div class="stat-card"><div class="stat-value">8.7</div><div class="stat-label">Días promedio de inventario</div></div>
+<div class="stat-card"><div class="stat-value">$1,240</div><div class="stat-label">Capital inmovilizado</div></div>
+</div>
+<div class="bottom-grid">
+<div class="card"><div class="card-header"><div class="card-title">Productos Estrella</div></div><div class="table-wrap"><table><thead><tr><th>Producto</th><th>Ventas/mes</th><th>Rotación</th></tr></thead><tbody>
+<tr><td>Castrol GTX 20W-50</td><td>142 uds</td><td><span class="stock-badge ok">Alta</span></td></tr>
+<tr><td>Havoline 10W-40</td><td>98 uds</td><td><span class="stock-badge ok">Alta</span></td></tr>
+<tr><td>Filtro aceite Toyota</td><td>67 uds</td><td><span class="stock-badge ok">Alta</span></td></tr>
+</tbody></table></div></div>
+<div class="card"><div class="card-header"><div class="card-title">Productos Hueso (Sin rotación)</div></div><div class="table-wrap"><table><thead><tr><th>Producto</th><th>Días sin mov.</th><th>Capital atrapado</th></tr></thead><tbody>
+<tr><td>Aditivo MotorClean 250ml</td><td>45 días</td><td><b>$380</b></td></tr>
+<tr><td>Grasa Especial HT-3</td><td>38 días</td><td><b>$520</b></td></tr>
+<tr><td>Refrigerante Prestone</td><td>32 días</td><td><b>$340</b></td></tr>
+</tbody></table></div></div>
+</div></div>
+
+<!-- REPORTES NIC 2 (Admin) -->
+<div class="view" id="view-reportes"><div class="section-header"><div><h2>Reportes NIC 2</h2><p>Informes contables — Norma Internacional de Contabilidad 2</p></div></div>
+<div class="stats-grid" style="grid-template-columns:repeat(3,1fr);margin-bottom:24px">
+<div class="stat-card"><div class="stat-value">$18,420</div><div class="stat-label">Valor total al costo</div></div>
+<div class="stat-card"><div class="stat-value">$17,890</div><div class="stat-label">Valor neto realizable</div></div>
+<div class="stat-card"><div class="stat-value">$17,890</div><div class="stat-label">Valor en libros (NIC 2: el menor)</div></div>
+</div>
+<div class="card" style="margin-bottom:20px"><div class="card-header"><div class="card-title">Promedio Ponderado</div><a class="card-action" onclick="showToast('📄','Exportando PDF...')">Exportar PDF</a></div>
+<div class="table-wrap"><table><thead><tr><th>Producto</th><th>Uds</th><th>Costo Total Disp.</th><th>Uds Totales</th><th>Costo Prom.</th><th>Valoración</th></tr></thead><tbody>
+<tr><td>Castrol GTX 20W-50</td><td>48</td><td>$624.00</td><td>52</td><td>$12.00</td><td><b>$576.00</b></td></tr>
+<tr><td>Havoline 10W-40</td><td>7</td><td>$360.00</td><td>50</td><td>$7.20</td><td><b>$50.40</b></td></tr>
+<tr><td>Valvoline MaxLife</td><td>3</td><td>$620.00</td><td>40</td><td>$15.50</td><td><b>$46.50</b></td></tr>
+</tbody></table></div></div>
+<div class="card"><div class="card-header"><div class="card-title">FIFO (First In, First Out)</div><a class="card-action" onclick="showToast('📄','Exportando PDF...')">Exportar PDF</a></div>
+<div class="table-wrap"><table><thead><tr><th>Producto</th><th>Uds</th><th>Lote antiguo</th><th>Costo lote</th><th>Valoración</th></tr></thead><tbody>
+<tr><td>Filtro aceite Toyota</td><td>22</td><td>15-Ene-2026</td><td>$5.50/ud</td><td><b>$121.00</b></td></tr>
+<tr><td>Filtro aire Hyundai</td><td>5</td><td>20-Dic-2025</td><td>$6.80/ud</td><td><b>$34.00</b></td></tr>
+</tbody></table></div></div></div>
+
+</main></div>
+
+<!-- MODAL: Nuevo Producto -->
+<div class="modal-overlay" id="productModal">
+<div class="modal">
+<div class="modal-header"><h3>Registrar Nuevo Producto</h3><button class="modal-close" onclick="closeModal('productModal')">✕</button></div>
+<div class="modal-body">
+<div class="form-group"><label>Nombre del producto</label><input type="text" placeholder="Ej: Castrol GTX 20W-50 1 Galón"></div>
+<div class="form-row"><div class="form-group"><label>Código SKU</label><input type="text" placeholder="SKU-000"></div><div class="form-group"><label>Categoría</label><select><option>Aceites</option><option>Filtros</option><option>Aditivos</option><option>Grasas</option></select></div></div>
+<div class="form-row"><div class="form-group"><label>Precio compra ($)</label><input type="number" placeholder="0.00" step="0.01"></div><div class="form-group"><label>Precio venta ($)</label><input type="number" placeholder="0.00" step="0.01"></div></div>
+<div class="form-row"><div class="form-group"><label>Stock inicial</label><input type="number" placeholder="0"></div><div class="form-group"><label>Stock mínimo</label><input type="number" placeholder="5"></div></div>
+<div class="form-row"><div class="form-group"><label>Proveedor</label><select><option>Castrol Ecuador</option><option>Texaco / Havoline</option><option>Shell Ecuador</option><option>Valvoline</option></select></div><div class="form-group"><label>Método valoración</label><select><option>Promedio Ponderado</option><option>FIFO</option></select></div></div>
+</div>
+<div class="modal-footer"><button class="btn-secondary" onclick="closeModal('productModal')">Cancelar</button><button class="btn-primary" onclick="closeModal('productModal');showToast('✅','Producto registrado exitosamente')"><svg><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>Guardar</button></div>
+</div></div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="js/script.js"></script>
+</body>
+</html>
