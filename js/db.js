@@ -3,18 +3,19 @@ require('dotenv').config();
 const sql = require('mssql');
 
 const config = {
-  server: process.env.DB_SERVER || 'localhost',
-  database: process.env.DB_NAME || 'LubricadorasDiana',
+  server: 'LubricadoraUG.mssql.somee.com', // El host
+  database: 'LubricadoraUG', // El nombre de la base de datos
+  port: 1433, // El puerto indicado
   authentication: {
     type: 'default',
     options: {
-      userName: process.env.DB_USER || 'sa',
-      password: process.env.DB_PASSWORD || 'Admin123@'
+      userName: 'xtrangern_SQLLogin_1', // El username
+      password: 'dsq7oak44g' // El password
     }
   },
   options: {
-    encrypt: true,
-    trustServerCertificate: true,
+    encrypt: true, // Requerido para conexiones a la nube como Azure/Somee
+    trustServerCertificate: true, // A menudo necesario si Somee no tiene un certificado SSL estricto configurado
     connectionTimeout: 15000,
     requestTimeout: 15000
   }
