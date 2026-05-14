@@ -188,16 +188,32 @@
     </div>
 
     <!-- MOVIMIENTOS VIEW -->
-    <div class="view" id="view-movimientos">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Movimientos de Inventario</div>
-        </div>
-        <div style="padding:20px;">
-          <p>Historial de movimientos en desarrollo...</p>
-        </div>
-      </div>
+    <div id="view-movimientos" class="view">
+  <div class="header-actions">
+    <h2>Movimientos de Inventario</h2>
+    <div>
+      <button class="btn-secondary" onclick="MOVIMIENTOS.showModal('Entrada')">↓ Registrar Entrada</button>
+      <button class="btn-danger" onclick="MOVIMIENTOS.showModal('Salida')">↑ Registrar Salida</button>
     </div>
+  </div>
+  
+  <div class="card">
+    <table class="table" id="movimientosTable">
+      <thead>
+        <tr>
+          <th>FECHA</th>
+          <th>TIPO</th>
+          <th>PRODUCTO</th>
+          <th>CANTIDAD</th>
+          <th>REFERENCIA</th>
+          <th>RESPONSABLE</th>
+        </tr>
+      </thead>
+      <tbody>
+        </tbody>
+    </table>
+  </div>
+</div>
 
     <!-- ALERTAS VIEW -->
     <div class="view" id="view-alertas">
@@ -322,6 +338,43 @@
   </div>
 </div>
 
+<!-- MODAL: Nuevo Movimiento -->
+<div class="modal-overlay" id="movimientoModal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="movModalTitle">Registrar Movimiento</h3>
+      <button class="btn-icon" onclick="MODAL.close('movimientoModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="movimientoForm" onsubmit="event.preventDefault(); MOVIMIENTOS.save();">
+        <input type="hidden" id="movTipo">
+        
+        <div class="form-group">
+          <label>Producto</label>
+          <select id="movProductoId" required>
+            </select>
+        </div>
+        
+        <div class="form-row">
+          <div class="form-group">
+            <label>Cantidad</label>
+            <input type="number" id="movCantidad" min="1" required>
+          </div>
+          <div class="form-group">
+            <label>Referencia / Factura</label>
+            <input type="text" id="movReferencia" placeholder="Ej: Factura #1234">
+          </div>
+        </div>
+        
+        <div class="modal-footer">
+          <button type="button" class="btn-secondary" onclick="MODAL.close('movimientoModal')">Cancelar</button>
+          <button type="submit" class="btn-primary" id="btnSaveMov">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <!-- TOAST CONTAINER -->
 <div id="toastContainer" class="toast-container"></div>
 
@@ -330,6 +383,7 @@
 <script src="js/js-nav.js"></script>
 <script src="js/js-ui.js"></script>
 <script src="js/js-productos.js"></script>
+<script src="js/js-movimientos.js"></script>
 
 </body>
 </html>

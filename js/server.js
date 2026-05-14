@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const db = require('./db');
 const productosRoutes = require('./routes-productos');
+const movimientosRoutes = require('./routes-movimientos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -20,6 +21,7 @@ app.get('/health', (req, res) => {
 
 // RUTAS API
 app.use('/api/productos', productosRoutes);
+app.use('/api/movimientos', movimientosRoutes);
 
 // ERROR HANDLING
 app.use((err, req, res, next) => {
