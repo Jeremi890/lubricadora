@@ -176,16 +176,50 @@
     </div>
 
     <!-- FACTURACION VIEW -->
-    <div class="view" id="view-facturacion">
-      <div class="card">
-        <div class="card-header">
-          <div class="card-title">Facturación</div>
-        </div>
-        <div style="padding:20px;">
-          <p>Módulo de facturación en desarrollo...</p>
-        </div>
+    <div id="view-facturacion" class="view">
+  <div class="header-actions">
+    <h2>Módulo de Facturación</h2>
+    <button class="btn-primary" onclick="FACTURACION.newSale()">+ Nueva Venta</button>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <h3>Historial de Ventas</h3>
+      <table class="table" id="facturasTable">
+        <thead>
+          <tr><th>#</th><th>FECHA</th><th>CLIENTE</th><th>TOTAL</th><th>ESTADO</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+
+    <div class="card" id="panelVenta" style="display:none;">
+      <h3>Generar Factura</h3>
+      <div class="form-group">
+        <label>Cliente</label>
+        <input type="text" id="facCliente" placeholder="Consumidor Final">
+      </div>
+      <div class="form-group">
+        <label>Agregar Producto</label>
+        <select id="facSelectProducto" onchange="FACTURACION.addToCart()">
+          <option value="">Buscar aceite/filtro...</option>
+        </select>
+      </div>
+      
+      <table class="table" id="cartTable">
+        <thead>
+          <tr><th>PROD.</th><th>CANT.</th><th>SUBT.</th><th></th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+      
+      <div class="total-section">
+        <h4>TOTAL A PAGAR: <span id="facTotal">$0.00</span></h4>
+        <button class="btn-primary" style="width:100%" onclick="FACTURACION.process()">Finalizar Venta</button>
       </div>
     </div>
+  </div>
+</div>
 
     <!-- MOVIMIENTOS VIEW -->
     <div id="view-movimientos" class="view">
@@ -384,6 +418,7 @@
 <script src="js/js-ui.js"></script>
 <script src="js/js-productos.js"></script>
 <script src="js/js-movimientos.js"></script>
+<script src="js/js-facturacion.js"></script>
 
 </body>
 </html>

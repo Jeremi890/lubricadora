@@ -35,9 +35,7 @@ const MOVIMIENTOS = {
     document.getElementById('movTipo').value = tipo;
     document.getElementById('movModalTitle').textContent = `Registrar ${tipo}`;
     document.getElementById('btnSaveMov').textContent = `Guardar ${tipo}`;
-    
-    // Cambiar color del botón según el tipo
-    document.getElementById('btnSaveMov').className = tipo === 'Entrada' ? 'btn-primary' : 'btn-danger';
+        document.getElementById('btnSaveMov').className = tipo === 'Entrada' ? 'btn-primary' : 'btn-danger';
 
     // Cargar los productos en el select (usamos la lista del módulo de productos)
     const select = document.getElementById('movProductoId');
