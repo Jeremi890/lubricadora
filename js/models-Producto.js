@@ -1,5 +1,5 @@
 // MODELO DE PRODUCTOS
-const db = require('../db');
+const db = require('./db');
 
 class ProductoModel {
   static async getAll() {
