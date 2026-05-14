@@ -1,21 +1,20 @@
-// CONFIGURACIÓN DE BASE DE DATOS SQL SERVER
-require('dotenv').config();
-const sql = require('mssql');
+// CONFIGURACIÓN DE BASE DE DATOS LOCALDB
+const sql = require('mssql'); // Cambiamos de msnodesqlv8 a mssql normal
 
 const config = {
-  server: 'LubricadoraUG.mssql.somee.com', // El host
-  database: 'LubricadoraUG', // El nombre de la base de datos
-  port: 1433, // El puerto indicado
+  server: 'LubricadoraUG.mssql.somee.com',
+  database: 'LubricadoraUG',
+  port: 1433,
   authentication: {
     type: 'default',
     options: {
-      userName: 'xtrangern_SQLLogin_1', // El username
-      password: 'dsq7oak44g' // El password
+      userName: 'xtrangern_SQLLogin_1',
+      password: 'dsq7oak44g'
     }
   },
   options: {
-    encrypt: true, // Requerido para conexiones a la nube como Azure/Somee
-    trustServerCertificate: true, // A menudo necesario si Somee no tiene un certificado SSL estricto configurado
+    encrypt: true,
+    trustServerCertificate: true,
     connectionTimeout: 15000,
     requestTimeout: 15000
   }
@@ -30,7 +29,7 @@ class Database {
     try {
       this.pool = new sql.ConnectionPool(config);
       await this.pool.connect();
-      console.log('✅ Conectado a SQL Server');
+      console.log('✅ Conectado a SQL Server (LocalDB)');
       return this.pool;
     } catch (err) {
       console.error('❌ Error de conexión:', err);
@@ -42,8 +41,6 @@ class Database {
     try {
       if (!this.pool) await this.connect();
       const request = this.pool.request();
-      
-      // Agregar parámetros
       for (const [key, value] of Object.entries(params)) {
         request.input(key, value);
       }
@@ -56,27 +53,8 @@ class Database {
     }
   }
 
-  async execute(procName, params = {}) {
-    try {
-      if (!this.pool) await this.connect();
-      const request = this.pool.request();
-      
-      for (const [key, value] of Object.entries(params)) {
-        request.input(key, value);
-      }
-      
-      const result = await request.execute(procName);
-      return result.recordset;
-    } catch (err) {
-      console.error('Error en execute:', err);
-      throw err;
-    }
-  }
-
   async close() {
-    if (this.pool) {
-      await this.pool.close();
-    }
+    if (this.pool) await this.pool.close();
   }
 }
 
